@@ -291,8 +291,8 @@ Set（集合）
 Dictionary（字典）
 
 按是否可变，可以分为以下两类：    
-不可变数据（4 个）：Number（数字）、String（字符串）、bool（布尔）、Tuple（元组）  #一旦创建，对象的值就不能被改变
-可变数据（3 个）：List（列表）、Dictionary（字典）、Set（集合）
+1）不可变数据（4 个）：Number（数字）、String（字符串）、bool（布尔）、Tuple（元组）  #一旦创建，对象的值就不能被改变
+2）可变数据（3 个）：List（列表）、Dictionary（字典）、Set（集合）
 1.多个变量赋值
 Python 允许你同时为多个变量赋值。例如：
 a = b = c = 1
@@ -331,6 +331,162 @@ False
 
 4.进制数表示
 Python 3 中整数字面量不允许前导零（如 080），二进制使用 0b 前缀 ，八进制数必须使用 0o 前缀（如 0o17），十六进制使用 0x 前缀（如 0x69）。
+
+
+5.列表（可变）   #写在[]里，其中的元素类型可以不同
+1）.[9, 2, 13, 14, 15, 6]
+>>> a[2:5] = []   # 将对应的元素值设置为空列表，即删除这些元素
+>>> a
+[9, 2, 6]
+
+
+2）.列表的应用：翻转字符串中的单词顺序
+def reverseWords(input):
+    # 通过空格将字符串分隔，把各个单词分隔为列表
+    inputWords = input.split(" ")     #split() 是 Python 字符串的固定方法，只对字符串作用
+                                                          #字符串.split()	            按任意空白符（空格、换行、制表符）分割
+                                                          # 字符串.split(" ")	            严格按单个空格分割
+                                                          #字符串.split(",")	            按逗号分割
+                                                          #字符串.split("|")	            按竖线分割
+    # inputWords[-1::-1] 三个参数说明：
+    # 第一个参数 -1 表示从最后一个元素开始
+    # 第二个参数为空，表示移动到列表开头
+    # 第三个参数 -1 表示逆向步进（每次向左移动一个位置）
+    inputWords = inputWords[-1::-1]
+
+    # 重新用空格拼接单词
+    output = ' '.join(inputWords)     #join(inputWords)，字符串的方法，将 inputWords 列表中的元素用分隔符拼接起来，重新组成字符串
+                                                                     #print(' '.join(words))      I like runoob（空格分隔）
+                                                                      #print(''.join(words))      Ilike runoob（无分隔符）
+                                                                      #print(','.join(words))     I,like,runoob（逗号分隔）
+                                                                      #print('---'.join(words))   I---like---runoob（三个横线分隔）
+    return output
+
+if __name__ == "__main__":
+    input = 'I like runoob'
+    rw = reverseWords(input)
+    print(rw)
+
+
+3）if __name__ == "__main__"的作用
+1））.if __name__ == "__main__" 就像一个“开关”。当你是直接运行这个 .py 文件时，__name__ 这个变量会被自动赋值为 "__main__"，开关打开，其下的代码块就会被执行。
+如果这个文件是被其它程序通过 import 导入的，那么 __name__ 的值就是它自己的模块名（即文件名，不含 .py），不等于 "__main__"，所以其下的代码块就不会执行
+2））.假设我们有一个文件叫 my_math.py，内容如下：
+# 文件名: my_math.py
+def add(a, b):
+    return a + b
+print(f"my_math.py 的 __name__ 现在是: {__name__}")
+
+if __name__ == "__main__":
+    print("这是直接运行的 my_math.py 文件，正在执行测试代码...")
+    print(f"2 + 3 = {add(2, 3)}")
+场景一：直接运行 my_math.py
+在命令行执行 python my_math.py，你会看到：
+
+my_math.py 的 __name__ 现在是: __main__
+这是直接运行的 my_math.py 文件，正在执行测试代码...
+2 + 3 = 5
+
+场景二：作为模块导入
+现在创建另一个文件叫 main.py，内容如下：
+# 文件名: main.py
+import my_math
+print(f"main.py 的 __name__ 是: {__name__}")
+print(f"1 + 1 = {my_math.add(1, 1)}")
+在命令行执行 python main.py，你会看到：
+
+text
+my_math.py 的 __name__ 现在是: my_math   # 注意，这里不是 __main__
+main.py 的 __name__ 是: __main__
+1 + 1 = 2
+对比发现：当 my_math 被导入时，由于它的 __name__ 变成了 "my_math"，不等于 "__main__"，所以它内部的测试代码没有被执行，只提供了 add 函数给 main.py 使用。
+
+💎 总结：什么时候用它？
+当你的 .py 文件希望既能作为独立工具直接运行，又能作为函数库被别的程序调用时，尤其推荐使用这个写法来组织代码。
+
+在写单元测试或模块自带的示例时，将测试代码放在 if __name__ == "__main__": 下，是 Python 社区的通用做法。
+
+
+
+6.元组（Tuple） #写在小括号 () 里，其中的元素类型可以不同，但其中的元素不能修改。
+1）构造包含 0 个或 1 个元素的元组比较特殊，有一些额外的语法规则：
+tup1 = ()    # 空元组
+tup2 = (20,) # 一个元素，需要在元素后添加逗号，以区分它是元组而不是普通的值。因为在没有逗号的情况下，Python 会将括号解释为数学运算中的括号：
+
+
+
+
+7.Set(集合)
+1）Python 中的集合（Set）是一种无序、可变的数据类型，用于存储唯一的元素。集合中的元素不会重复，并且可以进行交集、并集、差集等常见的集合操作。
+2）在 Python 中，集合使用大括号 {} 表示，元素之间用逗号 , 分隔。也可以使用 set() 函数创建集合。
+ 注意：创建一个空集合必须用 set() 而不是 {}，因为 {} 创建的是一个空字典。
+ 创建格式：
+ parame = {value01, value02, ...}
+ 或者
+ set(value)
+ 3）set的应用
+sites = {'Google', 'Taobao', 'Runoob', 'Facebook', 'Zhihu', 'Baidu'}
+print(sites)   # 输出集合（无序，重复元素会被自动去掉）
+# 成员测试
+if 'Runoob' in sites:
+    print('Runoob 在集合中')
+else:
+    print('Runoob 不在集合中')
+
+# set 可以进行集合运算
+a = set('abracadabra')
+b = set('alacazam')
+
+print(a)           # 输出a 中的唯一字符。 结果不唯一，因为集合是无序的
+
+print(a - b)       # a 和 b 的差集（在 a 中但不在 b 中）
+print(a | b)       # a 和 b 的并集（在 a 或 b 中）
+print(a & b)       # a 和 b 的交集（同时在 a 和 b 中）
+print(a ^ b)       # a 和 b 的对称差集（在 a 或 b 中，但不同时存在）
+
+
+
+8.Dictionary（字典）
+1）字典是一种映射类型（一种通过“键”来查找“值”的数据结构，就像查字典一样，给定一个输入（键），可以唯一确定一个输出（值）），用 {} 标识，它是一个 键(key) : 值(value) 的集合。键(key) 必须使用不可变类型，且在同一个字典中键必须是唯一的。
+
+2）
+my_dict = {}
+my_dict['one'] = "1 - 菜鸟教程"
+my_dict[2]     = "2 - 菜鸟工具"
+
+tinydict = {'name': 'runoob', 'code': 1, 'site': 'www.runoob.com'}
+
+print(my_dict['one'])       # 输出键为 'one' 的值
+print(my_dict[2])           # 输出键为 2 的值
+print(tinydict)             # 输出完整的字典
+print(tinydict.keys())      # 输出所有键
+print(tinydict.values())    # 输出所有值
+
+以上实例输出结果：
+1 - 菜鸟教程
+2 - 菜鸟工具
+{'name': 'runoob', 'code': 1, 'site': 'www.runoob.com'}
+dict_keys(['name', 'code', 'site'])             #这不是列表，是“视图对象”。优点：优点：不占用额外内存，可以直接遍历，可以转换为列表list(d.keys())
+dict_values(['runoob', 1, 'www.runoob.com'])     #keys()、values() 是字典类型的内置函数
+
+
+3）字典的键可以是整数、字符串、元组，但不能是列表 / 字典，否则会报错
+例如：my_dict[[1, 2]] = "错误"   # 列表不能作为键
+
+4）Python 中创建字典的三种不同方式
+      1）） dict([('Runoob', 1), ('Google', 2), ('Taobao', 3)])
+         {'Runoob': 1, 'Google': 2, 'Taobao': 3}
+
+      2）） {x: x**2 for x in (2, 4, 6)}
+         {2: 4, 4: 16, 6: 36}
+
+      3）） dict(Runoob=1, Google=2, Taobao=3)
+         {'Runoob': 1, 'Google': 2, 'Taobao': 3}
+
+
+
+
+
 
 
 
