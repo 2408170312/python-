@@ -486,6 +486,96 @@ dict_values(['runoob', 1, 'www.runoob.com'])     #keys()、values() 是字典类
 
 
 
+十四.字符串
+1.
+import time                      #导入 time 模块，用于后续的 time.sleep() 制造延迟效果。
+for i in range(101):             # 添加进度条图形和百分比,i 从 0 到 100
+    bar = '[' + '=' * (i // 2) + ' ' * (50 - i // 2) + ']'  
+    print(f"\r{bar} {i:3}%", end='', flush=True)
+    time.sleep(0.05)             #暂停 0.05 秒（50 毫秒），让进度条以肉眼可见的速度“填充”，产生动画效果。
+print()                          #print() 默认会输出一个换行符 \n，光标移动到下一行开头，命令提示符出现在新的一行，不影响进度条显示
+
+1）这里print()里的 f 是 f-string（格式化字符串字面量）的标志，是 Python 3.6 引入的一种字符串格式化语法。f 告诉 Python：这个字符串里面有大括号 {}，大括号里的内容需要当成表达式来计算，然后把计算结果填进去。
+没有 f（普通字符串）
+python
+bar = "[=====]"
+i = 50
+print("\r{bar} {i:3}%", end='')
+
+输出：
+{bar} {i:3}%
+大括号被当作普通字符原样输出，不会替换成变量值。
+
+2){i:3}	#把变量 i 的值填进来，并且占 3 个字符宽度（右对齐）
+3)end=''：默认 print 会在末尾加换行符 \n，这里设为空字符串，不换行。
+4)flush=True：强制立即输出，不等待缓冲区满，保证实时显示。
+
+
+
+2.进制转换
+decimal_number = 42
+binary_number = bin(decimal_number)  # 十进制转换为二进制，bin()
+print('转换为二进制:', binary_number)  # 转换为二进制: 0b101010
+
+octal_number = oct(decimal_number)  # 十进制转换为八进制 oct()
+print('转换为八进制:', octal_number)  # 转换为八进制: 0o52
+
+hexadecimal_number = hex(decimal_number)  # 十进制转换为十六进制 hex()
+print('转换为十六进制:', hexadecimal_number) # 转换为十六进制: 0x2a
+
+
+3.原始字符串(r/R 所有的字符串都是直接按照字面的意思来使用，没有转义特殊或不能打印的字符[即某种意义上的失效])
+ 1)print(r"Hello\nWorld")
+Hello\nWorld
+
+2)print("Hello\nWorld")
+Hello
+World
+
+
+4.格式字符串(%)
+print ("我叫 %s 今年 %d 岁!" % ('小明', 10))   
+%s	         占位符，表示这里要放一个字符串
+%d	         占位符，表示这里要放一个整数
+%	         格式化运算符，把右边的值填入左边的占位符
+('小明', 10)	一个元组，按顺序提供要填入的值
+
+
+
+5.f-string
+f-string 是 python3.6 之后版本添加的，称之为字面量格式化字符串，是新的格式化字符串的语法。
+
+之前我们习惯用百分号 (%):
+
+实例
+>>> name = 'Runoob'
+>>> 'Hello %s' % name
+'Hello Runoob'
+f-string 格式化字符串以 f 开头，后面跟着字符串，字符串中的表达式用大括号 {} 包起来，它会将变量或表达式计算后的值替换进去，实例如下：
+
+实例
+>>> name = 'Runoob'
+>>> f'Hello {name}'  # 替换变量
+'Hello Runoob'
+>>> f'{1+2}'         # 使用表达式
+'3'
+
+>>> w = {'name': 'Runoob', 'url': 'www.runoob.com'}
+>>> f'{w["name"]}: {w["url"]}'
+'Runoob: www.runoob.com'
+用了这种方式明显更简单了，不用再去判断使用 %s，还是 %d。
+
+在 Python 3.8 的版本中可以使用 = 符号来拼接运算表达式与结果：
+实例
+>>> x = 1
+>>> print(f'{x+1}')   # Python 3.6
+2
+
+>>> x = 1
+>>> print(f'{x+1=}')   # Python 3.8
+x+1=2
+
+
 
 
 
