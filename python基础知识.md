@@ -444,6 +444,29 @@ print(a | b)       # a 和 b 的并集（在 a 或 b 中）
 print(a & b)       # a 和 b 的交集（同时在 a 和 b 中）
 print(a ^ b)       # a 和 b 的对称差集（在 a 或 b 中，但不同时存在）
 
+4)添加元素
+语法格式如下：
+s.add( x )
+将元素 x 添加到集合 s 中，如果元素已存在，则不进行任何操作。
+实例:
+thisset = set(("Google", "Runoob", "Taobao"))  #不能是列表，字典，集合(不可哈希)
+thisset.add("Facebook")
+print(thisset)
+{'Taobao', 'Facebook', 'Google', 'Runoob'}
+
+还有一个方法，也可以添加元素，且参数可以是列表，元组，字典等，语法格式如下：
+s.update( x )
+x 可以有多个，用逗号分开。
+实例:
+thisset = set(("Google", "Runoob", "Taobao"))
+thisset.update({1,3})
+print(thisset)
+{1, 3, 'Google', 'Taobao', 'Runoob'}
+thisset.update([1,4],[5,6])  
+print(thisset)
+{1, 3, 4, 5, 6, 'Google', 'Taobao', 'Runoob'}
+
+
 
 
 8.Dictionary（字典）
@@ -470,7 +493,7 @@ dict_keys(['name', 'code', 'site'])             #这不是列表，是“视图�
 dict_values(['runoob', 1, 'www.runoob.com'])     #keys()、values() 是字典类型的内置函数
 
 
-3）字典的键可以是整数、字符串、元组，但不能是列表 / 字典，否则会报错
+3）字典的键可以是整数、字符串、元组，但不能是列表 / 字典/集合，否则会报错
 例如：my_dict[[1, 2]] = "错误"   # 列表不能作为键
 
 4）Python 中创建字典的三种不同方式
@@ -579,6 +602,425 @@ x+1=2
 
 
 
+十五.哈希
+哈希（Hash）详解
+哈希是一种将任意大小的数据（如字符串、数字、对象）映射为固定大小值（哈希值）的算法。可以理解为给数据生成一个"数字指纹"。
 
+1、通俗理解
+类比1：学生证号
+# 每个学生信息 → 唯一的学号
+"张三, 18岁, 北京" → 2024001  # 哈希值
+"李四, 19岁, 上海" → 2024002  # 哈希值
+类比2：指纹识别
+# 每个人 → 唯一的指纹
+"张三" → 指纹: 3f2a1b  # 哈希值
+"李四" → 指纹: 5c8d2e  # 哈希值
+
+
+2、Python中的哈希
+# 使用 hash() 函数获取哈希值
+print(hash("hello"))      # 输出: 2763187496943622071
+print(hash("world"))      # 输出: 507847867688263415
+print(hash(42))           # 输出: 42
+print(hash(3.14))         # 输出: 322818021289917443
+print(hash((1,2,3)))      # 输出: 529344067295497451
+
+# 相同内容产生相同哈希值
+print(hash("hello"))      # 2763187496943622071
+print(hash("hello"))      # 2763187496943622071 （相同）
+
+
+3、哈希的特性
+1). 确定性
+python
+# 相同输入 → 相同输出
+print(hash("Python"))  # 总是相同的结果
+2). 快速计算
+python
+# 无论字符串多长，计算都非常快
+hash("a")          # 立即返回
+hash("a" * 10000)  # 也是立即返回
+3). 不可逆
+python
+# 从哈希值无法反推出原始数据
+# 已知哈希值 2763187496943622071
+# 无法知道原始数据是 "hello"
+
+
+4、哈希在Python中的作用
+1). 字典（dict）的键查找
+# 字典使用哈希表实现
+my_dict = {
+    "apple": 1,    # "apple" 的哈希值 → 存储位置
+    "banana": 2,   # "banana" 的哈希值 → 存储位置
+    "orange": 3    # "orange" 的哈希值 → 存储位置
+}
+
+# 查找过程
+print(my_dict["apple"])  # 1. 计算"apple"的哈希值
+                         # 2. 直接跳到存储位置
+                         # 3. O(1)时间复杂度
+2). 集合（set）的元素去重
+python
+# 集合使用哈希值判断元素是否重复
+my_set = {1, 2, 3, 1, 2, 3}  # 重复的会被自动去重
+print(my_set)  # {1, 2, 3}
+
+# 判断原理：
+# 1. 计算1的哈希值
+# 2. 检查是否已存在相同哈希值的元素
+# 3. 存在则认为是重复，不添加
+
+
+5、为什么可变对象不可哈希？
+# 列表是可变的
+my_list = [1, 2, 3]
+print(hash(my_list))  # ❌ TypeError
+
+# 原因：哈希值会变化
+my_list = [1, 2, 3]
+hash1 = hash(tuple(my_list))  # 假设可哈希
+
+my_list.append(4)  # 列表内容改变了
+hash2 = hash(tuple(my_list))  # 哈希值会不同
+
+# 如果列表作为字典的键
+d = {my_list: "value"}  # 假设允许
+my_list.append(4)  # 修改了键
+# 字典就无法找到原来存储的值了！
+
+
+6、哈希的实际应用
+1). 密码存储
+import hashlib                        #导入Python内置的哈希算法库，里面包含各种哈希算法
+password = "my_password123"           #创建一个字符串变量存储原始密码
+hash_value = hashlib.sha256(password.encode()).hexdigest()  #password.encode()：字符串编码为字节(字节数据 b'my_password123')。哈希算法只认字节，不认字符串。hashlib.sha256()---创建SHA-256哈希计算器。   hashlib.sha256().hexdigest()---返回十六进制字符串
+print(hash_value)
+# 登录时：输入密码 → 计算哈希 → 对比存储的哈希
+
+2). 文件完整性校验
+import hashlib
+def get_file_hash(filename):             #定义一个函数，用于计算文件的哈希值. filename 是文件路径，即要打开的文件
+    with open(filename, 'rb') as f:       #以二进制只读模式打开文件。rb=read binary(二进制读模式)。with	是上下文管理器，可以自动关闭文件，无需手动f.close()
+        return hashlib.md5(f.read()).hexdigest()   #读取文件全部内容，计算MD5哈希值，返回十六进制字符串
+official_hash = "5d41402abc4b2a76b9719d911017c592"  #官方提供的哈希值
+downloaded_hash = get_file_hash("downloaded_file.zip")  #下载后计算
+if official_hash == downloaded_hash:
+    print("文件完整，未被篡改")
+    
+3). 快速查找（如您系统中的车辆ID）
+# 车辆追踪使用哈希快速查找
+tracked_vehicles = {}  # 字典
+def update_vehicle_position(vehicle_id, position):
+    # vehicle_id 的哈希值用于快速定位车辆
+    tracked_vehicles[vehicle_id] = position  # O(1) 时间
+
+    
+7、哈希表原理图
+字典内部结构（简化版）：
+哈希值（索引）        存储的数据
+   0      →          [None]
+   1      →          ["apple": 1]
+   2      →          [None]
+   3      →          ["banana": 2]
+   4      →          [None]
+   5      →          ["orange": 3]
+   
+查找 "banana":
+1). 计算 hash("banana") = 3
+2). 直接访问索引3
+3). 找到数据！ O(1)时间复杂度
+
+
+8、关键总结
+概念	说明
+哈希	将数据转为固定长度的数字指纹
+哈希值	计算出来的数字结果
+可哈希	对象可以计算哈希值（不可变对象）
+不可哈希	对象不能计算哈希值（可变对象）
+哈希表	使用哈希值快速存储/查找的数据结构
+核心记忆点
+哈希 = 给数据生成唯一身份证号
+相同数据 → 相同身份证号
+不同数据 → 不同身份证号（理想情况）
+从身份证号无法反推原数据
+
+可变对象为什么不可哈希？
+因为对象变了，"身份证号"也会变
+
+字典和集合依赖不变的身份证号来找数据
+这就是哈希！它是Python字典和集合能够快速查找的底层原理。
+
+9. 可哈希类型列表
+类型	 示例	                  说明
+int         42, -5, 0	        整数
+float	  3.14, -0.5, 2.0	        浮点数
+str	  "hello", 'Python'	        字符串
+bool	  True, False	        布尔值
+None	  None	                   空值
+tuple	  (1, 2, 3), (1, "a")        元组（所有元素可哈希）
+frozenset	  frozenset([1,2,3])         不可变集合
+bytes	  b'hello'	         字节串
+complex	  1+2j	                   复数
+
+
+10.不可哈希类型列表
+类型	         示例	                         说明
+list	       [1, 2, 3], ["a", "b"]	              列表（可变）
+set	      {1, 2, 3}, {"a", "b"}	              集合（可变）
+dict	      {"a": 1}, {"name": "Tom"}	    字典（可变）
+bytearray	      bytearray(b'hello')	              可变字节数组
+自定义类的实例	MyClass()	                         默认不可哈希
+
+
+
+
+
+
+十六:.pop()函数
+1.
+thisset = set(("Google", "Runoob", "Taobao", "Facebook"))
+x = thisset.pop()
+print(f"被删除的元素: {x}")
+print(f"剩余集合: {thisset}")
+关键点：
+pop() 删除的是任意一个元素（不确定是哪个）
+因为集合是无序的，所以没有"第一个"的说法
+实际由哈希值和内部存储顺序决定。且不同进程间：顺序可能改变（哈希随机化）
+
+2、验证示例
+每次运行结果可能不同
+# 第一次运行
+thisset = set(("Google", "Runoob", "Taobao", "Facebook"))
+print(thisset.pop())  # 可能是 Facebook
+
+# 第二次运行（程序重启后）
+thisset = set(("Google", "Runoob", "Taobao", "Facebook"))
+print(thisset.pop())  # 可能是 Google
+
+查看实际结果
+thisset = set(("Google", "Runoob", "Taobao", "Facebook"))
+print("原始集合:", thisset)
+x = thisset.pop()
+print("被删除的元素:", x)
+print("剩余集合:", thisset)
+
+# 可能输出：
+# 原始集合: {'Taobao', 'Google', 'Runoob', 'Facebook'}
+# 被删除的元素: Taobao
+# 剩余集合: {'Google', 'Runoob', 'Facebook'}
+
+3、为什么看起来随机？
+集合内部存储原理
+# 集合基于哈希表存储，元素顺序由哈希值决定
+for item in {"Google", "Runoob", "Taobao", "Facebook"}:
+    print(f"{item:10} 哈希值: {hash(item)}")
+# 输出示例：
+# Google     哈希值: 1758375238635770947
+# Runoob     哈希值: -5595808781650567816
+# Taobao     哈希值: 1807485501461404964
+# Facebook   哈希值: 4625581223145945371
+
+# 集合内部按哈希值排序存储
+# pop() 删除哈希值最小的那个
+
+
+4、与列表的对比
+1） 列表：有序，pop() 删除最后一个（默认）
+my_list = ["Google", "Runoob", "Taobao", "Facebook"]
+x = my_list.pop()
+print(f"列表删除: {x}")  # 总是删除 "Facebook"（最后一个）
+print(f"剩余列表: {my_list}")  # ['Google', 'Runoob', 'Taobao']
+
+2） 集合：无序，pop() 删除任意元素
+my_set = {"Google", "Runoob", "Taobao", "Facebook"}
+x = my_set.pop()
+print(f"集合删除: {x}")  # 不确定是哪个
+print(f"剩余集合: {my_set}")  # 剩下3个，不确定哪3个
+
+
+5、多次 pop() 实验
+thisset = set(("Google", "Runoob", "Taobao", "Facebook"))
+print("原始集合:", thisset)
+
+# 连续 pop 直到空
+while thisset:
+    print(f"pop 出: {thisset.pop()}")
+
+# 输出示例（顺序不确定）：
+# 原始集合: {'Taobao', 'Google', 'Runoob', 'Facebook'}
+# pop 出: Taobao
+# pop 出: Google
+# pop 出: Runoob
+# pop 出: Facebook
+
+
+6、注意事项
+空集合不能用 pop()
+empty_set = set()
+# empty_set.pop()  # ❌ KeyError: 'pop from an empty set'
+# 正确做法：先判断
+if empty_set:
+    x = empty_set.pop()
+else:
+    print("集合为空，不能 pop")
+    
+pop() 的行为在 Python 不同版本可能有差异
+# Python 3.6+：字典保持插入顺序，但集合仍然无序
+# Python 3.7+：字典有序，集合仍不一定有序
+# 建议：不要依赖 pop() 的具体顺序
+
+
+ 
+7、总结
+数据结构	pop() 行为	           顺序
+list	删除最后一个（索引-1）	有序，可预测
+set	删除任意一个	          无序，不可预测
+dict	删除最后插入的（Python 3.7+）	有序，可预测
+
+
+
+
+
+十七.python中的输入
+Python 中的输入主要通过 input() 函数实现，用于从用户获取键盘输入。
+1、基本输入
+1). 最简单的输入
+name = input()
+print(f"你好，{name}")
+# 运行示例：
+# 用户输入: 张三
+# 输出: 你好，张三
+
+2). 带提示信息的输入
+# 在括号内添加提示文字
+name = input("请输入你的名字: ")
+print(f"你好，{name}")
+# 运行示例：
+# 请输入你的名字: 张三
+# 你好，张三
+
+
+2、输入的数据类型（重要！）
+input() 返回的永远是字符串
+# 示例1：输入数字
+age = input("请输入年龄: ")
+print(type(age))  # <class 'str'>
+print(age)        # "18"（字符串）
+
+# 示例2：输入数字但当作数字运算会出错
+age = input("请输入年龄: ")
+# next_year = age + 1  # ❌ TypeError！字符串不能加数字
+类型转换
+# 转换为整数
+age = input("请输入年龄: ")
+age = int(age)  # 转换为整数
+next_year = age + 1  # ✅ 正确
+print(f"明年你{next_year}岁")
+
+# 转换为浮点数（小数）
+height = input("请输入身高(米): ")
+height = float(height)
+print(f"身高: {height}米")
+
+# 一行写法
+age = int(input("请输入年龄: "))
+
+
+3、完整示例集合
+1)：收集个人信息
+# 获取各种类型的数据
+name = input("请输入姓名: ")
+age = int(input("请输入年龄: "))
+height = float(input("请输入身高(米): "))
+is_student = input("是否为学生？(是/否): ")
+
+print("\n=== 个人信息 ===")
+print(f"姓名: {name}")
+print(f"年龄: {age}")
+print(f"身高: {height}米")
+print(f"学生: {is_student}")
+print(f"类型: 姓名={type(name)}, 年龄={type(age)}, 身高={type(height)}")
+
+2)：多输入一行处理
+# 方法1：分别输入
+x = int(input("请输入x: "))
+y = int(input("请输入y: "))
+print(f"x+y={x+y}")
+
+# 方法2：一行输入多个值（用空格分隔）
+# 输入示例: 10 20
+a, b = map(int, input("请输入两个数字（空格分隔）: ").split())  #.split()将字符串按空格分割成列表，返回：['10', '20']。map(int,...) 函数：将 int() 函数应用到列表的每一个元素。相当于：int('10')，int('20') ，将字符串转换成整数(因为input()返回的永远是字符串)
+print(f"a+b={a+b}")
+
+# 方法3：输入列表
+# 输入示例: 1 2 3 4 5
+numbers = list(map(int, input("请输入多个数字（空格分隔）: ").split()))  #list(),将map对象转换成列表
+print(f"数字列表: {numbers}")
+print(f"总和: {sum(numbers)}")
+
+
+3)循环输入
+numbers = []
+while True:
+    num = input("请输入数字（按q退出）: ")
+    if num.lower() == 'q':
+        break
+    numbers.append(int(num))
+print(f"平均值: {sum(numbers)/len(numbers)}")
+
+
+
+
+
+
+
+十八.条件控制
+1.mach...case
+1)
+def http_error(status):
+    match status:
+        case 400:
+            return "Bad request"
+        case 404:
+            return "Not found"
+        case 418:
+            return "I'm a teapot"
+        case _:     #case _: 类似于 C 和 Java 中的 default:，当其他 case 都无法匹配时，匹配这条，保证永远会匹配成功。
+            return "Something's wrong with the internet"
+ 
+print(http_error(400))
+print(http_error(404))
+print(http_error(418))
+print(http_error(500))
+
+
+2)一个 case 也可以设置多个匹配条件，条件使用 | 隔开，例如：
+...
+    case 401|403|404:
+        return "Not allowed"
+
+
+
+2.if语句
+if condition_1:
+    statement_block_1
+elif condition_2:  #elif就是c语言中的else if
+    statement_block_2
+else:
+    statement_block_3
+
+3.if嵌套
+num=int(input("输入一个数字："))
+if num%2==0:
+    if num%3==0:
+        print ("你输入的数字可以整除 2 和 3")
+    else:
+        print ("你输入的数字可以整除 2，但不能整除 3")
+else:
+    if num%3==0:
+        print ("你输入的数字可以整除 3，但不能整除 2")
+    else:
+        print  ("你输入的数字不能整除 2 和 3")
 
 
