@@ -1024,3 +1024,54 @@ else:
         print  ("你输入的数字不能整除 2 和 3")
 
 
+
+
+
+十九.循环语句
+循环控制关键字与方法
+关键字 / 函数	      说明	                                        示例
+for	       迭代循环，用于遍历序列或可迭代对象	                           for i in list:
+while	          条件循环，条件为 True 时持续执行	                  while x > 0:
+break	             立即终止当前循环	                                        break
+continue	        跳过本次循环剩余代码，进入下一次迭代	                   continue
+else（循环）	循环正常结束（未被 break）时执行	                  for i in range(3): ... else: ...
+pass	            循环中的占位语句（空操作）	                            for i in range(5): pass
+range()	         生成整数序列，常与 for 循环配合使用	                  range(0, 5)
+enumerate()	遍历时同时获取索引和值	                            for i, v in enumerate(list):
+
+1.while循环
+
+n = 100
+sum = 0
+counter = 1
+while counter <= n:
+    sum = sum + counter   
+    counter += 1
+print("1 到 %d 之和为: %d" % (n,sum))    # %是字符串格式化操作符（旧式格式化），用于将变量值插入到字符串的占位符中。
+
+1）更现代的替代方法（Python 3.6+）：
+# f-string（推荐）
+print(f"1 到 {n} 之和为: {sum}")
+
+# format() 方法
+print("1 到 {} 之和为: {}".format(n, sum))
+
+
+2).while 循环使用 else 语句
+count = 0
+while count < 5:
+   print (count, " 小于 5")
+   count = count + 1
+else:
+   print (count, " 大于或等于 5")
+
+3)for...else
+检查质数：
+for n in range(2, 10):
+    for x in range(2, n):
+        if n % x == 0:
+            print(n, '等于', x, '*', n//x)
+            break
+    else:
+        # 循环中没有找到元素
+        print(n, ' 是质数')
